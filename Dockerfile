@@ -14,7 +14,12 @@ ENV TZ=Asia/Shanghai
 COPY package.json package-lock.json* ./
 
 # 安装依赖（包括 devDependencies，构建需要）
-RUN npm ci --include=dev
+# 如果没有 package-lock.json，使用 npm install
+RUN if [ -f package-lock.json ]; then \
+      npm ci --include=dev; \
+    else \
+      npm install --include=dev; \
+    fi
 
 # 复制源代码
 COPY . .
