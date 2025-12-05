@@ -24,7 +24,9 @@ RUN if [ -f package-lock.json ]; then \
 # 复制源代码
 COPY . .
 
-# 构建前端应用
+# 构建前端应用（生产环境，使用相对路径）
+# VITE_API_BASE_URL 如果未设置，将在代码中使用相对路径
+ENV VITE_API_BASE_URL=/api/v1
 RUN npm run build
 
 # 删除 devDependencies（生产环境不需要）

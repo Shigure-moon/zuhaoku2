@@ -178,7 +178,9 @@ const appealRules: FormRules = {
 }
 
 const uploadAction = computed(() => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1'
+  // 生产环境使用相对路径，开发环境使用完整 URL
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 
+    (import.meta.env.PROD ? '/api/v1' : 'http://localhost:8080/api/v1')
   return `${baseUrl}/upload`
 })
 
