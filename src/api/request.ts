@@ -21,7 +21,10 @@ const getBaseURL = () => {
 }
 
 const baseURL = getBaseURL()
-console.log('API Base URL:', baseURL, 'Mode:', import.meta.env.MODE, 'PROD:', import.meta.env.PROD)
+// 生产环境不输出日志，开发环境输出以便调试
+if (!import.meta.env.PROD) {
+  console.log('API Base URL:', baseURL, 'Mode:', import.meta.env.MODE, 'PROD:', import.meta.env.PROD, 'VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL)
+}
 
 const service: AxiosInstance = axios.create({
   baseURL: baseURL,
