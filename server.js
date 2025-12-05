@@ -103,7 +103,12 @@ if (existsSync(frontendDistPath)) {
       return next();
     }
     // 返回前端 index.html
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
+    res.sendFile(path.join(frontendDistPath, 'index.html'), (err) => {
+      if (err) {
+        console.error('发送 index.html 失败:', err);
+        res.status(500).send('Internal Server Error');
+      }
+    });
   });
 }
 

@@ -78,3 +78,10 @@ myblog/
 # ========== 系统文件 ==========
 .DS_Store
 *.orig
+
+# 构建产物
+dist/
+build/
+
+# 前端构建产物（现在在根目录）
+*.tsbuildinfo
