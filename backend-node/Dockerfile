@@ -1,4 +1,22 @@
-# 使用 Node.js 20 作为基础镜像（支持 File API）
+# 多阶段构建：同时构建前端和后端
+# 阶段1: 构建前端
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# 复制前端 package 文件
+COPY ../frontend/package*.json ./
+
+# 安装前端依赖
+RUN npm ci
+
+# 复制前端源代码
+COPY ../frontend/ .
+
+# 构建前端
+RUN npm run build
+
+# 阶段2: 构建后端并包含前端
 FROM node:20-alpine
 
 # 设置工作目录
@@ -10,17 +28,19 @@ RUN apk add --no-cache tzdata curl
 # 设置时区
 ENV TZ=Asia/Shanghai
 
-# 复制 package.json 和 package-lock.json
+# 复制后端 package.json 和 package-lock.json
 COPY package*.json ./
 
-# 安装依赖
+# 安装后端依赖
 RUN npm ci --only=production
 
-# 复制应用代码
+# 复制后端应用代码
 COPY . .
 
+# 从前端构建阶段复制构建产物
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+
 # 使用基础镜像中已存在的 node 用户（UID/GID 1000）
-# node:18-alpine 镜像已经包含了 node 用户
 RUN chown -R node:node /app
 
 # 切换到非 root 用户

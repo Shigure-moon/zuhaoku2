@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 
 // 导入数据库连接（初始化数据库表）
 import './api/db.js';
@@ -77,8 +78,36 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 处理
-app.use((req, res) => {
+// 静态文件服务（前端构建产物）
+// 检查是否存在前端构建目录
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+if (existsSync(frontendDistPath)) {
+  console.log('✅ 检测到前端构建目录，启用静态文件服务');
+  // 静态资源（带缓存）
+  app.use('/assets', express.static(path.join(frontendDistPath, 'assets'), {
+    maxAge: '1y',
+    immutable: true
+  }));
+  // 其他静态文件
+  app.use(express.static(frontendDistPath, {
+    maxAge: 0,
+    etag: false,
+    lastModified: false
+  }));
+  
+  // SPA 路由支持：所有非 API 请求都返回 index.html
+  app.get('*', (req, res, next) => {
+    // 如果是 API 请求，跳过
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    // 返回前端 index.html
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+}
+
+// API 404 处理（只处理 API 请求）
+app.use('/api', (req, res) => {
   res.status(404).json({ 
     code: 404,
     message: '接口不存在',
