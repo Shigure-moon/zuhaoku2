@@ -19,13 +19,12 @@ RUN npm ci --only=production
 # 复制应用代码
 COPY backend-node/ ./
 
-# 创建非 root 用户（如果组已存在则使用，不存在则创建）
-RUN (getent group 1000 || addgroup -g 1000 nodejs) && \
-    (getent passwd 1000 || adduser -D -u 1000 -G nodejs nodejs) && \
-    chown -R nodejs:nodejs /app
+# 使用基础镜像中已存在的 node 用户（UID/GID 1000）
+# node:18-alpine 镜像已经包含了 node 用户
+RUN chown -R node:node /app
 
 # 切换到非 root 用户
-USER nodejs
+USER node
 
 # 暴露端口
 EXPOSE 8080
