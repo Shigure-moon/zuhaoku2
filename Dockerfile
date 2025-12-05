@@ -10,8 +10,9 @@ COPY frontend/package*.json ./
 # 安装前端依赖
 RUN npm ci
 
-# 复制前端源代码
-COPY frontend/ .
+# 复制前端源代码（排除 node_modules 和 dist）
+COPY frontend/ ./
+RUN rm -rf node_modules dist 2>/dev/null || true
 
 # 构建前端
 RUN npm run build

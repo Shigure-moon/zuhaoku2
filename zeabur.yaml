@@ -5,6 +5,7 @@ build:
   type: dockerfile
   dockerfile: Dockerfile
   context: .
+  # 确保构建上下文包含 frontend 和 backend-node 目录
 
 port: 8080
 
