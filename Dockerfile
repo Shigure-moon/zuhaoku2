@@ -32,9 +32,10 @@ COPY . .
 # 构建前端应用（生产环境，使用相对路径）
 # 设置 VITE_API_BASE_URL 环境变量，确保构建时使用相对路径
 # 同时设置 NODE_ENV=production 确保 Vite 识别为生产模式
+# 使用 --mode production 明确指定生产模式构建
 ENV VITE_API_BASE_URL=/api/v1
 ENV NODE_ENV=production
-RUN npm run build
+RUN npm run build -- --mode production
 
 # 删除 devDependencies（生产环境不需要）
 RUN npm prune --production
