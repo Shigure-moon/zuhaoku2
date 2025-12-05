@@ -79,9 +79,9 @@ app.use((err, req, res, next) => {
 });
 
 // 静态文件服务（前端构建产物）
-// 检查是否存在前端构建目录（Docker 容器中路径为 /app/frontend/dist）
-// 在 Docker 容器中，server.js 在 /app，前端构建产物在 /app/frontend/dist
-const frontendDistPath = path.join(__dirname, 'frontend/dist');
+// 检查是否存在前端构建目录（Docker 容器中路径为 /app/dist）
+// 在 Docker 容器中，server.js 在 /app，前端构建产物在 /app/dist
+const frontendDistPath = path.join(__dirname, 'dist');
 if (existsSync(frontendDistPath)) {
   console.log('✅ 检测到前端构建目录，启用静态文件服务');
   // 静态资源（带缓存）
