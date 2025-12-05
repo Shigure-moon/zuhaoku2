@@ -19,9 +19,9 @@ RUN npm ci --only=production
 # 复制应用代码
 COPY backend-node/ ./
 
-# 创建非 root 用户
-RUN addgroup -g 1000 nodejs && \
-    adduser -D -u 1000 -G nodejs nodejs && \
+# 创建非 root 用户（如果组已存在则使用，不存在则创建）
+RUN (getent group 1000 || addgroup -g 1000 nodejs) && \
+    (getent passwd 1000 || adduser -D -u 1000 -G nodejs nodejs) && \
     chown -R nodejs:nodejs /app
 
 # 切换到非 root 用户
