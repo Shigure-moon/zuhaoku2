@@ -1,0 +1,80 @@
+# ========== 环境变量文件（敏感信息，不要提交到仓库）==========
+.env
+.env.local
+.env.prod
+.env.alipay
+.env.*
+*.env
+!env.example
+!*.example
+
+# ========== 支付宝密钥文件（敏感信息，不要提交到仓库）==========
+backend/scripts/alipay-keys/*.pem
+alipay-keys/*.pem
+**/alipay-keys/*.pem
+*.pem
+*.key
+
+# ========== 微信支付密钥文件（敏感信息）==========
+**/wechat-keys/
+*.key
+
+# ========== 其他敏感配置文件 ==========
+**/*secret*.yml
+**/*secret*.yaml
+**/*secret*.properties
+
+# ========== 日志文件 ==========
+*.log
+logs/
+log
+
+# ========== 临时文件 ==========
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# ========== IDE ==========
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ========== 编译输出 ==========
+target/
+dist/
+build/
+*.class
+*.jar
+*.war
+frontend/dist/
+
+# ========== 依赖 ==========
+node_modules/
+venv/
+env/
+.pnp
+.pnp.js
+
+# ========== 测试和开发文件 ==========
+*.test.js
+*.spec.js
+coverage/
+.nyc_output/
+
+# ========== 其他项目 ==========
+myblog/
+
+# ========== 数据库文件 ==========
+*.sqlite
+*.db
+*.sql.backup
+
+# ========== 系统文件 ==========
+.DS_Store
+*.orig

@@ -1,0 +1,33 @@
+# Zeabur 部署配置文件（Node.js 后端）
+# 参考文档: https://zeabur.com/docs
+
+build:
+  type: dockerfile
+  dockerfile: Dockerfile
+  context: .
+
+port: 8080
+
+# 资源配置
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+
+# 健康检查配置
+healthcheck:
+  path: /health
+  interval: 30
+  timeout: 5
+  retries: 3
+  startPeriod: 30
+
+# 自动扩容配置
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilization: 70
+  targetMemoryUtilization: 80
