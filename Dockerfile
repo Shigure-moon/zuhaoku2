@@ -15,7 +15,11 @@ COPY package.json package-lock.json* ./
 
 # 安装依赖（包括 devDependencies，构建需要）
 # 添加重试机制和更长的超时时间，以应对 npm registry 网络问题
-RUN if [ -f package-lock.json ]; then \
+# 设置 npm 配置：增加超时时间和重试次数
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    if [ -f package-lock.json ]; then \
       npm ci --include=dev --prefer-offline --no-audit || \
       npm install --include=dev --prefer-offline --no-audit; \
     else \
