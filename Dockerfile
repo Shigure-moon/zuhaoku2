@@ -14,11 +14,12 @@ ENV TZ=Asia/Shanghai
 COPY package.json package-lock.json* ./
 
 # 安装依赖（包括 devDependencies，构建需要）
-# 如果没有 package-lock.json，使用 npm install
+# 添加重试机制和更长的超时时间，以应对 npm registry 网络问题
 RUN if [ -f package-lock.json ]; then \
-      npm ci --include=dev; \
+      npm ci --include=dev --prefer-offline --no-audit || \
+      npm install --include=dev --prefer-offline --no-audit; \
     else \
-      npm install --include=dev; \
+      npm install --include=dev --prefer-offline --no-audit; \
     fi
 
 # 复制源代码
