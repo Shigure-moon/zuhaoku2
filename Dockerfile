@@ -1,5 +1,5 @@
 # Node.js 后端 Dockerfile（完全参考 myblog 的实现）
-FROM node:18-alpine
+FROM node:20-alpine
 
 # 设置工作目录
 WORKDIR /app
