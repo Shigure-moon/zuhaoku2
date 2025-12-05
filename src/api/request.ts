@@ -7,19 +7,24 @@ import router from '@/router'
 // 创建 Axios 实例
 // 生产环境使用相对路径（单服务部署），开发环境使用完整 URL
 const getBaseURL = () => {
+  // 优先使用环境变量
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL
   }
   // 生产环境：使用相对路径（前端和后端在同一服务中）
-  if (import.meta.env.PROD) {
+  // 检查是否为生产模式（构建后的代码）
+  if (import.meta.env.MODE === 'production' || import.meta.env.PROD) {
     return '/api/v1'
   }
   // 开发环境：使用本地后端
   return 'http://localhost:8080/api/v1'
 }
 
+const baseURL = getBaseURL()
+console.log('API Base URL:', baseURL, 'Mode:', import.meta.env.MODE, 'PROD:', import.meta.env.PROD)
+
 const service: AxiosInstance = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: baseURL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
