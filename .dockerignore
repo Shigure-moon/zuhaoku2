@@ -1,12 +1,38 @@
-# 排除不需要的文件
-node_modules/
-frontend/node_modules/
-backend-node/node_modules/
+# 排除不需要的文件和目录
+# 注意：不要排除 frontend/ 和 backend-node/ 目录本身，只排除其中的 node_modules 和 dist
+
+# 依赖目录
+**/node_modules/
 frontend/dist/
+
+# Git 相关
 .git/
 .gitignore
+
+# 文档（保留 README.md）
 *.md
 !README.md
+
+# 环境变量文件
 .env
 .env.local
+.env.*
+
+# 日志文件
 *.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+
+# IDE 配置
+.idea/
+.vscode/
+
+# 其他
+reorganize-project.sh
+clear-and-upload-github.sh
+prepare-github-upload.sh
+cleanup-github.sh
