@@ -139,7 +139,7 @@ const handleCommand = (command: string) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
+  background: #f7f7f7;
   border-bottom: 1px solid #e4e7ed;
   padding: 0 20px;
 

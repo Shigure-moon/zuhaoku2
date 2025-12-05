@@ -326,7 +326,7 @@ onMounted(async () => {
       router.replace({ query: { ...route.query, orderNo: undefined } })
     } else {
       // 没有订单号参数，正常加载订单列表
-      loadOrderList()
+    loadOrderList()
     }
   } catch (error) {
     console.error('Orders 组件初始化失败:', error)
