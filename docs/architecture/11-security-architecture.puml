@@ -1,0 +1,333 @@
+@startuml 安全架构图
+!theme plain
+!include 00-common-config.puml
+skinparam componentStyle rectangle
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+
+title 租号酷系统 - 安全架构图（等保三级）
+
+package "传输层安全" {
+  component "TLS 1.3" as TLS
+  component "通信完整性" as CommIntegrity
+}
+
+package "身份鉴别层" {
+  component "JWT Token" as JWT
+  component "图形验证码" as Captcha
+  component "登录锁定" as LoginLock
+  component "密码策略" as PasswordPolicy
+}
+
+package "访问控制层" {
+  component "RBAC 模型" as RBAC
+  component "接口级鉴权" as APIAuth
+  component "防火墙规则" as Firewall
+}
+
+package "数据安全层" {
+  component "AES-256-GCM" as AES
+  component "TDE 透明加密" as TDE
+  component "GPG 备份加密" as GPG
+  component "前端脱敏" as DataMasking
+}
+
+package "密码/密钥管理" {
+  component "Argon2id" as Argon2
+  component "密钥管理" as KeyMgmt
+}
+
+package "审计日志层" {
+  component "审计日志" as AuditLog
+  component "日志字段" as LogFields
+}
+
+package "业务安全层" {
+  component "令牌桶限速" as RateLimit
+  component "幂等性保护" as Idempotency
+  component "支付验签" as PaymentSign
+}
+
+package "安全防护组件" {
+  component "WAF" as WAF
+  component "IDS/IPS" as IDS
+  component "堡垒机" as JumpServer
+}
+
+package "监控告警层" {
+  component "健康检查" as HealthCheck
+  component "日志监控" as LogMonitor
+  component "告警服务" as Alert
+}
+
+package "隐私保护层" {
+  component "个人信息管理" as PrivacyMgmt
+  component "数据匿名化" as Anonymization
+}
+
+' 连接关系
+TLS --> CommIntegrity: 提供完整性保护
+JWT --> PasswordPolicy: 密码验证
+Captcha --> LoginLock: 防暴力破解
+LoginLock --> PasswordPolicy: 密码策略
+RBAC --> APIAuth: 权限检查
+Firewall --> WAF: 流量过滤
+AES --> TDE: 数据加密
+TDE --> GPG: 备份加密
+DataMasking --> AES: 展示脱敏
+Argon2 --> KeyMgmt: 密钥管理
+AuditLog --> LogFields: 记录字段
+RateLimit --> Idempotency: 防刷+防重
+PaymentSign --> Idempotency: 支付安全
+WAF --> IDS: 防护联动
+HealthCheck --> LogMonitor: 监控数据
+LogMonitor --> Alert: 异常告警
+PrivacyMgmt --> Anonymization: 隐私保护
+
+' 详细说明注释
+note right of TLS
+  **传输加密**
+  - 全站强制 HTTPS
+  - TLS 1.3 协议
+  - HSTS 启用
+  - 证书自动续期
+end note
+
+note right of CommIntegrity
+  **完整性保护**
+  - TLS 提供完整性
+  - 应用层签名（可选）
+end note
+
+note right of JWT
+  **认证机制**
+  - JWT 无状态认证
+  - Token 有效期 15min
+  - 刷新令牌机制
+end note
+
+note right of Captcha
+  **防暴力破解**
+  - SVG 验证码
+  - 4位字符
+  - 5分钟过期
+  - 一次性使用
+end note
+
+note right of LoginLock
+  **防暴力破解**
+  - 5次失败锁定
+  - 锁定15分钟
+  - IP维度统计
+end note
+
+note right of PasswordPolicy
+  **密码要求**
+  - 长度 ≥ 12位
+  - 大小写+数字+特殊字符
+  - Argon2id 加密
+  - 90天强制更换（待实现）
+end note
+
+note right of RBAC
+  **角色权限**
+  - TENANT（租客）
+  - OWNER（商家）
+  - OPERATOR（管理员）
+  - 最小权限原则
+end note
+
+note right of APIAuth
+  **权限控制**
+  - requireRole 中间件
+  - 前端路由守卫
+  - 资源级权限
+end note
+
+note right of Firewall
+  **网络访问控制**
+  - 仅开放 443/80
+  - IP 白名单
+  - 拒绝其他端口
+end note
+
+note right of AES
+  **敏感字段加密**
+  - 手机号加密
+  - 账号密码加密
+  - 自动生成 IV
+  - 认证加密（AEAD）
+end note
+
+note right of TDE
+  **数据库加密**
+  - MySQL TDE
+  - 表空间加密
+  - 自动加密/解密
+end note
+
+note right of GPG
+  **备份加密**
+  - GPG 加密备份文件
+  - 密钥由 KMS 管理
+  - 异地存储加密
+end note
+
+note right of DataMasking
+  **数据脱敏**
+  - 手机号：138****8888
+  - 姓名：*伟
+  - 前端展示层脱敏
+end note
+
+note right of Argon2
+  **密码加密**
+  - 算法：Argon2id
+  - 盐长度：16B
+  - 并行度：4
+  - 内存：64MB
+  - 迭代：3次
+end note
+
+note right of KeyMgmt
+  **密钥策略**
+  - 环境变量存储
+  - 避免硬编码
+  - KMS 托管（待实现）
+  - 90天轮换（待实现）
+end note
+
+note right of AuditLog
+  **操作记录**
+  - 登录/登出
+  - 授权检查
+  - 下单/支付
+  - 改密/提权
+  - 保存6个月
+end note
+
+note right of LogFields
+  **记录内容**
+  - who（用户信息）
+  - when（时间戳）
+  - what（操作类型）
+  - src_ip（IP地址）
+  - user_agent
+  - 执行耗时
+end note
+
+note right of RateLimit
+  **防刷机制**
+  - 单IP 10 r/s
+  - 令牌桶算法
+  - 防止黄牛抢号
+end note
+
+note right of Idempotency
+  **防重复**
+  - UUID v4 幂等token
+  - 防重复下单
+  - 防重复支付
+end note
+
+note right of PaymentSign
+  **支付安全**
+  - 支付宝回调验签
+  - 订单状态校验
+  - 金额校验
+end note
+
+note right of WAF
+  **Web应用防火墙**
+  - OWASP Top 10 规则
+  - SQL注入防护
+  - XSS防护
+  - CSRF防护
+end note
+
+note right of IDS
+  **入侵检测/防护**
+  - 攻击特征检测
+  - 主动阻断
+  - 实时告警
+end note
+
+note right of JumpServer
+  **管理访问**
+  - SSH/RDP 会话审计
+  - 命令级审计
+  - 录像保存90天
+end note
+
+note right of HealthCheck
+  **服务监控**
+  - 数据库连接
+  - 内存使用
+  - CPU使用
+  - 磁盘空间
+end note
+
+note right of LogMonitor
+  **异常检测**
+  - 错误日志统计
+  - 性能日志分析
+  - 异常行为检测
+end note
+
+note right of Alert
+  **告警机制**
+  - 邮件告警
+  - 短信告警
+  - 阈值配置
+  - 冷却期机制
+end note
+
+note right of PrivacyMgmt
+  **用户权利**
+  - 信息浏览
+  - 信息导出（JSON/CSV）
+  - 信息删除
+  - 账号注销（7日）
+end note
+
+note right of Anonymization
+  **埋点匿名化**
+  - 用户ID匿名化
+  - 手机号匿名化
+  - IP地址匿名化
+  - User-Agent匿名化
+end note
+
+' 安全域标注
+note top of TLS
+  **传输层安全**
+  - 全站 HTTPS
+  - TLS 1.3
+end note
+
+note top of AES
+  **数据加密**
+  - AES-256-GCM
+  - TDE 透明加密
+  - GPG 备份加密
+end note
+
+note top of Argon2
+  **密码安全**
+  - Argon2id
+  - 等保三级要求
+end note
+
+note top of AuditLog
+  **审计合规**
+  - 关键操作记录
+  - 保存6个月
+end note
+
+note top of WAF
+  **安全防护**
+  - WAF + IDS/IPS
+  - 堡垒机审计
+end note
+
+@enduml
